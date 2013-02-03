@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<h2>Login</h2>
+<div class="content_wrapper">
+    <form method="post">
+    {% csrf_token %}
+    <div id="content_spacer"></div>
+    {% if error1 %}<div class="error_message">{{error1}}</div>{% endif %}
+    <div class="content_line">
+        <label for="username">Username</label>
+        <input class="text_input" type="text" name="username" value="{{username}}">
+    </div>
+    {% if error2 %}<div class="error_message">{{error2}}</div>{% endif %}
+    <div class="content_line">
+        <label for="password">Password</label>
+        <input class="text_input" type="password" name="password" value="{{password}}">
+    </div>
+    <div class="button_line">
+        <input class="button" type="submit" value="Login">
+        </form>
+        <div id="login_signup">
+            <form method="link" action="/signup">
+            New User?<input class="button" type="submit" value="Sign Up">
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

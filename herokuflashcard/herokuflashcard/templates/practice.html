@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Practice{% endblock %}
+
+{% block js %}
+document.onkeydown = function(e) {
+    e = e || window.event; // because of Internet Explorer quirks...
+    k = e.which || e.charCode || e.keyCode; // because of browser differences...
+
+    if (k == 72 && !e.altKey && !e.ctrlKey && !e.shiftKey) {
+        document.forms["hint"].submit();
+    }
+    else if (k == 38 && !e.altKey && !e.ctrlKey && !e.shiftKey) {
+        document.forms["correct"].submit();
+    }
+    else if (k == 40 && !e.altKey && !e.ctrlKey && !e.shiftKey) {
+        document.forms["wrong"].submit();
+    }
+    else if (k == 37 && !e.altKey && !e.ctrlKey && !e.shiftKey) {
+        document.forms["back"].submit();
+    }
+    else if (k == 39 && !e.altKey && !e.ctrlKey && !e.shiftKey) {
+        document.forms["next"].submit();
+    }
+    else if (k == 32 && !e.altKey && !e.ctrlKey && !e.shiftKey) {
+        document.forms["flip"].submit();
+    }
+    else if (k == 83 && !e.altKey && !e.ctrlKey && !e.shiftKey) {
+        document.forms["shuffle"].submit();
+    }
+    else {
+        return true; // it's not a key we recognize, move on...
+    }
+    return false; // we processed the event, stop now.
+}
+{% endblock %}
+
+{% block content %}
+<h2>{{vcard.session.title}}</h2>
+<div class="content_wrapper">
+    <div id="content_spacer"></div>
+    <div id="practice_text">
+        {% if side == "q" %}Question: <pre>{{ vcard.card.question }}</pre>{% endif %}
+        {% if side == "a" %}Answer: <pre>{{ vcard.card.answer }}</pre>{% endif %}
+        {% if side == "h" %}Hint: <pre>{{ vcard.card.hint }}</pre>{% endif %}
+    </div>
+    <div id="content_spacer"></div>
+    <div class="practice_button_line" width=140px>
+        <div class="left_button">
+            <form method="post" id="back" value="Back">
+            {% csrf_token %}
+            <input type="submit" name="back" value="<<">
+            <input type="hidden" name="back" value="<<"></form>
+        </div>
+        <div class="right_button">
+            <form method="post" id="next" value="Next">
+            {% csrf_token %}
+            <input type="submit" name="next" value=">>">
+            <input type="hidden" name="next" value=">>"></form>
+        </div>
+        <div id="card_count">
+            {{vcard.number}}/{{vcard.session.num_cards}}
+        </div>
+    </div>
+    <div class="practice_button_line">
+        {% if side == "a" %}
+        <div class="right_button">
+            <form method="post" id="hint" value="Hint">
+            {% csrf_token %}
+            <input type="submit" name="hint" value="Hint">
+            <input type="hidden" name="hint" value="Hint"></form>
+        </div>
+        {% endif %}
+        {% if side == "q" %}
+        <div class="left_button">
+            <form method="post" id="hint" value="Hint">
+            {% csrf_token %}
+            <input type="submit" name="hint" value="Hint">
+            <input type="hidden" name="hint" value="Hint"></form>
+        </div>
+        {% endif %}
+        {% if side != "a" %}
+        <div class="right_button">
+            <form method="post" id="answer" value="Answer">
+            {% csrf_token %}
+            <input type="submit" name="answer" value="Answer">
+            <input type="hidden" name="answer" value="Answer"></form>
+        </div>
+        {% endif %}
+        {% if side != "q" %}
+        <div class="left_button">
+            <form method="post" id="question" value="Question">
+            {% csrf_token %}
+            <input type="submit" name="question" value="Question">
+            <input type="hidden" name="question" value="Question"></form>
+        </div>
+        {% endif %}
+    </div>
+    <form method="post" id="flip">
+    {% csrf_token %}
+    {% if side != "a" %}
+        <input type="hidden" name="answer" value="Answer">
+    {% endif %}
+    {% if side != "q" %}
+        <input type="hidden" name="question" value="Question">
+    {% endif %}
+    </form>
+    <div class="practice_button_line">
+        <div class="left_button">
+            <form method="post" id="wrong">
+            {% csrf_token %}
+            {% if vcard.state == 1 or vcard.state == 2 %}
+                <input type="submit" name="wrong" value="Wrong">
+                <input type="hidden" name="wrong" value="Wrong">
+            {% endif %}
+            {% if vcard.state == 0 %}
+                <input type="submit" disabled="disabled" name="wrong" value="Wrong">
+                <input type="hidden" name="wrong" value="Wrong">
+            {% endif %}
+            </form>
+        </div>
+        <div class="right_button">
+            <form method="post" id="correct">
+            {% csrf_token %}
+            {% if vcard.state == 1 or vcard.state == 0 %}
+                <input type="submit" name="correct" value="Correct">
+                <input type="hidden" name="correct" value="Correct">
+            {% endif %}
+            {% if vcard.state == 2 %}
+                <input type="submit" disabled="disabled" name="correct" value="Correct">
+                <input type="hidden" name="correct" value="Correct">
+            {% endif %}
+            </form>
+        </div>
+    </div>
+    <div id="content_spacer"></div>
+    <div class="practice_button_line">
+        <div class="left_button">
+            <form method="post">
+            {% csrf_token %}
+            <input type="submit" name="exit" value="Exit">
+            <input type="hidden" name="exit" value="Exit"></form>
+        </div>
+        <div class="right_button">
+            <form method="post">
+            {% csrf_token %}
+            <input type="submit" name="save" value="Save">
+            <input type="hidden" name="save" value="Save"></form>
+        </div>
+    </div>
+    <div class="practice_button_line">
+        <form method="post" id = "shuffle">
+        {% csrf_token %}
+        <input type="submit" name="shuffle" value="Shuffle">
+        <input type="hidden" name="shuffle" value="Shuffle">
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+
+

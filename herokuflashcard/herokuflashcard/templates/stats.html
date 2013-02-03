@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Stats{% endblock %}
+
+{% block content %}
+<h2>Stats for {{username}}</h2>
+<form method="post">
+{% csrf_token %}
+<table id="stats_table">
+    <tr>
+        <th>Study?</th>
+        <th>Saved</th>
+        <th>Title</th>
+        <th># Cards</th>
+        <th># Correct</th>
+        <th># Wrong</th>
+        <th># Skipped</th>
+        <th>Delete?</th>
+    </tr>
+    {% for session in sessions %}
+    <tr>
+        <td>
+            <input type="checkbox" name="study" value="{{ session.id }}">
+        </td>
+        <td>{{ session.created }}</td>
+        <td>{{ session.title }}</td>
+        <td>{{ session.num_cards }}</td>
+        <td>{{ session.correct }}</td>
+        <td>{{ session.wrong }}</td>
+        <td>{{ session.skipped }}</td>
+        <td>
+            <input type="checkbox" name="delete" value="{{ session.id }}">
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+<div id="stats_bottom_header">
+    <h3>Restudy</h3>
+</div>
+{% if error %}<div color="red">{{error}}</div>{% endif %}
+<div id="stats_button_wrapper">
+    <div class="button_col_left">
+        <div class="top_text">
+            Wrong
+        </div>
+        <div class="bottom_button">
+            <input type="checkbox" name="selection" value="0">
+        </div>
+    </div>
+    <div class="button_col_mid">
+        <div class="top_text">
+            Skipped
+        </div>
+        <div class="bottom_button">
+            <input type="checkbox" name="selection" value="1">
+        </div>
+    </div>
+    <div class="button_col_right">
+        <div class="top_text">
+            Correct
+        </div>
+        <div class="bottom_button">
+            <input type="checkbox" name="selection" value="2">
+        </div>
+    </div>
+</div>
+<div class="bottom_button_line">
+    <div class="left_button">
+        <input type="submit" value="Study">
+    </div>
+    <div class="right_button">
+        <input type="submit" value="Delete">
+    </div>
+</div>
+</form>
+<div class="bottom_button_line">
+    <form method="link" action="/welcome">
+    <input type="submit" value="Back">
+    </form>
+</div>
+<div id="content_spacer"></div>
+<div id="content_spacer"></div>
+<div id="content_spacer"></div>
+<div id="content_spacer"></div>
+
+
+
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Cardset{% endblock %}
+
+{% block content %}
+
+<h2>Edit Cardset</h2>
+<form method="post">
+{% csrf_token %}
+<div id="create_header">
+    <span id="create_title">Flashcard Deck Title: </span>
+    <input name="title" class="edit_title" type="text" value="{{cardset.title}}">
+    <span class="title_error">{{error}}</span>
+</div>
+<table class="input_table">
+    <tr>
+        <th>Card #</th>
+        <th>Question</th>
+        <th>Answer</th>
+        <th>Hint</th>
+        <th>Delete?</th>
+    </tr>
+    {% for card in cards %}
+    <tr>
+        <td align="center">{{forloop.counter}}</td>
+        <td>
+            <textarea cols=20 rows=4 name="q{{forloop.counter}}">{{card.question}}</textarea>
+        </td>
+        <td>
+            <textarea cols=20 rows=4 name="a{{forloop.counter}}">{{card.answer}}</textarea>
+        </td>
+        <td>
+            <textarea cols=20 rows=4 name="h{{forloop.counter}}">{{card.hint}}</textarea>
+        </td>
+        <td>
+            <input type="checkbox" class="checkbox" name="delete" value="{{forloop.counter}}">
+        </td>
+    </tr>
+    {% endfor %}
+
+    {% for x in extra_cards %}
+     <tr>
+        <td align="center">{{x}}</td>
+        <td>
+            <textarea cols=20 rows=4 name="q{{x}}"></textarea>
+        </td>
+        <td>
+            <textarea cols=20 rows=4 name="a{{x}}"></textarea>
+        </td>
+        <td>
+            <textarea cols=20 rows=4 name="h{{x}}"></textarea>
+        </td>
+        <td>
+        </td>
+    </tr>
+    {% endfor %}
+    <input type="hidden" name="tot_cards" value="{{tot_cards}}">
+</table>
+<div class="button_line">
+    <label for="add">Add cards?</label>
+    <input type="text" name="add">
+    <input type="submit" class="button" value="Add">
+    <input type="submit" value="Save">
+    <input type="submit" value="Delete">
+</div>
+</form>
+<div class="bottom_button_line">
+    <div class="left_button">
+        <form method="link" action="/welcome">
+        <input type="submit" value="Back"></form>
+    </div>
+    <div class="right_button">
+        <form method="link" action="/delete">
+        <input type="submit" value="Obliterate Cardset"></form>
+    </div>
+</div>
+
+{% endblock %}

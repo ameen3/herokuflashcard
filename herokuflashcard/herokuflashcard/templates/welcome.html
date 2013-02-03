@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<h2>Welcome {{username}}</h2>
+<div class="content_wrapper">
+    <div id="content_spacer"></div>
+    <div class="button_line">
+        <form method="link" action="/create">
+        <input class="button" type="submit" value="Create Card Set">
+        </form>
+    </div>
+    <div class="button_line">
+        <form method="post">
+        {% csrf_token %}
+        <label for "edit">Edit Cardsets</label>
+        <select name="edit" value="edit">
+        {% for cardset in cardsets %}
+        <option>{{cardset.title}}</option>
+        {% endfor %}
+        <input class="button" type="submit" value="Edit">
+        </form>
+    </div>
+    <div class="button_line">
+        <form method="post">
+        {% csrf_token %}
+        <label for "pracitce">Practice</label>
+        <select name="practice" value="practice">
+        {% for cardset in cardsets %}
+        <option>{{cardset.title}}</option>
+        {% endfor %}
+        <input class="button" type="submit" value="Practice">
+        </form>
+    </div>
+    <div class="button_line">
+        <form method="link" action="/stats">
+        <input class="button" type="submit" value="Stats">
+        </form>
+    </div>
+    <div class="button_line">
+        <form method="link" action="/logout">
+        <input class="button" type="submit" value="Logout">
+        </form>
+    </div>
+</div>
+{% endblock %}

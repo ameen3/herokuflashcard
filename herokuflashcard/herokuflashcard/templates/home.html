@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<h2>Home</h2>
+<div class="content_wrapper">
+<div id="content_spacer"></div>
+    <div class="home_buttons">
+        <form method="link" action="/login">
+        <input class="right_button" type="submit" value="Login">
+        </form>
+        <form method="link" action="/signup">
+        <input class="left_button" type="submit" value="Sign Up">
+        </form>
+    </div>
+</div>
+
+{% endblock %}

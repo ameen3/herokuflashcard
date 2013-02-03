@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Signup{% endblock %}
+
+{% block content %}
+<h2>Signup</h2>
+<div class="content_wrapper">
+    <form method="post">
+    {% csrf_token %}
+    <div id="content_spacer"></div>
+    {% if error1 %}<div class="error_message">{{error1}}</div>{% endif %}
+    <div class="content_line">
+        <label for="username">Username</label>
+        <input class="text_input" type="text" name="username" value="{{username}}">
+    </div>
+    {% if error2 %}<div class="error_message">{{error2}}</div>{% endif %}
+    <div class="content_line">
+        <label for="password">Password</label>
+        <input class="text_input" type="password" name="password" value="{{password}}">
+    </div>
+    {% if error3 %}<div class="error_message">{{error3}}</div>{% endif %}
+    <div class="content_line">
+        <label for="verify">Verify Password</label>
+        <input class="text_input" type="password" name="verify" value="{{verify}}">
+    </div>
+    <div class="button_line">
+        <input class="button" type="submit" value="Sign Up">
+        </form>
+        <div id="login_signup">
+            <form method="link" action="/login">
+            Already signed up?<input class="button" type="submit" value="Login">
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

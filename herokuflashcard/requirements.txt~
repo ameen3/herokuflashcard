@@ -1,0 +1,2 @@
+# Only install production dependencies
+-r requirements/prod.txt

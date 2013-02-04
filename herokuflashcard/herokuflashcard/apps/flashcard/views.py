@@ -308,7 +308,10 @@ def practice(request):
     vcards = request.session['vcards']
 
     if request.method == 'GET':
-        current_card = vcards[0]
+        try:
+            current_card = request.session['current_card']
+        except:
+            current_card = vcards[0]
         side = "q"
         request.session['side'] = side
         request.session['current_card'] = current_card

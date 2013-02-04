@@ -8,7 +8,7 @@
     border:5px;
     border-style:solid;
     border-color:#87CEFA;
-    height:10%;
+    height:50px;
     width:300px;
     margin:0 auto;
 }
@@ -16,6 +16,7 @@
 #base_header h1{
     text-decoration:underline;
     text-align:center;
+    margin: 10px;
 }
 
 #body_wrapper{
@@ -38,7 +39,7 @@ h2{
 .content_wrapper{
     background:#1E90FF;
     width:260px;
-    height:300px;
+    height:360px;
     margin: 20px auto;
 }
 
@@ -59,7 +60,7 @@ h2{
 }
 
 #content_spacer{
-    height:20px;
+    height:12px;
 }
 
 .error_message{
@@ -127,6 +128,9 @@ h2{
 #practice_text{
     margin: 0px 10px;
     font-size:16px;
+    text-align:left;
+    width:200px;
+    height:100px;
 }
 
 #card_count{
@@ -151,8 +155,8 @@ h2{
 .practice_button_line{
     width: 180px;
     height:40px;
-    margin:8px auto;
-    padding:2px;
+    margin:2px auto;
+    padding:0px;
     text-align:center;
 }
 

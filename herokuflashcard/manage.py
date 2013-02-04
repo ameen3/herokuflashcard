@@ -10,10 +10,10 @@ if __name__ == "__main__":
     #os.environ.setdefault("DJANGO_SETTINGS_MODULE", "herokuflashcard.settings.prod")
 
     #dev
-    #os.environ.setdefault("DJANGO_SETTINGS_MODULE", "herokuflashcard.settings.dev")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "herokuflashcard.settings.dev")
 
     #test
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "herokuflashcard.settings.test")
+    #os.environ.setdefault("DJANGO_SETTINGS_MODULE", "herokuflashcard.settings.test")
 
     from django.core.management import execute_from_command_line
 

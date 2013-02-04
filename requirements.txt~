@@ -1,2 +1,2 @@
 # Only install production dependencies
--r herokuflashcard/requirements/prod.txt
+-r herokuflashcard/requirements/test.txt

@@ -1,4 +1,7 @@
 from django.conf.urls import patterns, include, url
+from herokuflashcard.settings.prod import STATIC_ROOT
+
+import os
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -27,4 +30,10 @@ urlpatterns = patterns('',
     url(r'^signup/$', 'herokuflashcard.apps.flashcard.views.signup', name='signup'),
     url(r'^login/$', 'herokuflashcard.apps.flashcard.views.login', name='login'),
     url(r'^logout/$', 'herokuflashcard.apps.flashcard.views.logout', name='logout'),
+)
+
+root = PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+urlpatterns += patterns('',
+        (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'%s' % root: STATIC_ROOT}),
 )

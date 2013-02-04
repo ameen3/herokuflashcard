@@ -45,7 +45,7 @@ document.onkeydown = function(e) {
         {% if side == "h" %}Hint: <pre>{{ vcard.card.hint }}</pre>{% endif %}
     </div>
     <div id="content_spacer"></div>
-    <div class="practice_button_line" width=140px>
+    <div class="practice_button_line">
         <div class="left_button">
             <form method="post" id="back" value="Back">
             {% csrf_token %}

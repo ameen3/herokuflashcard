@@ -1,3 +1,4 @@
+# common dependencies
 Django==1.4.3
 argparse==1.2.1
 distribute==0.6.28

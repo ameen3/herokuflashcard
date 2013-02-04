@@ -189,3 +189,11 @@ LOGGING = {
 }
 
 DATABASES['default'] =  dj_database_url.config()
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+STATICFILES_STORAGE = DEFAULT_FILE_STORAGE
+AWS_ACCESS_KEY_ID = 'AKIAIDZNEYAG55JN4RWQ'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'heroku-tut'
+STATIC_URL = '//s3.amazonaws.com/%s/' % AWS_STORAGE_BUCKET_NAME
+ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'

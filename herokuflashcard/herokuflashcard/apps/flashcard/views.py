@@ -312,6 +312,8 @@ def practice(request):
     if not user:
         return HttpResponseRedirect('/login')
     vcards = request.session['vcards']
+    if not vcards:
+        return HttpResponseRedirect('/welcome')
 
     if request.method == 'GET':
         try:
@@ -581,7 +583,7 @@ def wipe_session(request, *args):
 
 def string_check(*args):
     for arg in args:
-        if arg == " " or arg == "":
+        if re.match(r"^ *$", arg):
             return False
     return True
 
@@ -643,12 +645,13 @@ def create_cards(request, tot_cards, cardset, save, user):
 
         temp_cards = list(cards)
         cards = []
+        count = 1
         for temp_card in temp_cards:
-
-            card = Card(number=temp_card.number, question=temp_card.question,
+            card = Card(number=count, question=temp_card.question,
                         answer=temp_card.answer, hint=temp_card.hint, cardset=cardset)
             card.save()
             cards.append(card)
+            count += 1
 
     cards = delete_cards(request, cards, save)
     add = add_cards(request)
@@ -722,9 +725,9 @@ def null_session(session):
 
 def get_card(request, i):
     #gets card attributes from request
-    q = request.POST.get('q%d' % i)
-    a = request.POST.get('a%d' % i)
-    h = request.POST.get('h%d' % i)
+    q = format_string(request.POST.get('q%d' % i))
+    a = format_string(request.POST.get('a%d' % i))
+    h = format_string(request.POST.get('h%d' % i))
     return q, a, h
 
 
@@ -754,7 +757,7 @@ def textwall_check(request):
     textwall = request.POST.get('textwall')
     field = request.POST.get('field')
     line = request.POST.get('line')
-    if textwall and field and line:
+    if textwall:
         if string_check(textwall, field, line):
             return True
     return False
@@ -779,13 +782,25 @@ def textwall_post(request):
     if not error:
         for i in range(len(lines)):
             fields = lines[i].split(field)
-            q = fields[0]
-            a = fields[1]
+            q = format_string(fields[0])
+            a = format_string(fields[1])
             if len(fields) == 3:
-                h = fields[2]
+                h = format_string(fields[2])
             else:
                 h = ""
             number = i + 1
             card = Temp_Card(number=number, question=q, answer=a, hint=h)
             cards.append(card)
     return cards, error, textwall
+
+def format_string(string, max_length=38):
+    new_string = ""
+    lines = string.split('\n')
+    for line in lines:
+        if string_check(line):
+            while len(line) > max_length:
+                segment = line[:max_length-2]
+                line = line[max_length-2:]
+                new_string = new_string + segment + '\n'
+            new_string = new_string + line + '\n'
+    return new_string

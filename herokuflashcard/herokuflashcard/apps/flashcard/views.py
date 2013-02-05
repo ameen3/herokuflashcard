@@ -7,7 +7,6 @@ from herokuflashcard.apps.flashcard.models import User, Cardset, Card, Session, 
 import re
 import hashlib
 import random
-import string
 
 SECRET = "secret"
 
@@ -295,7 +294,8 @@ def session_builder(request):
     cardset = request.session['cardset']
     session = Session(username=user, title=cardset.title)
     session.save()
-    cards = list(Card.objects.filter(cardset__exact=cardset))
+    cards = Card.objects.filter(cardset__exact=cardset)
+    cards = list(cards.order_by('number'))
     vcards = []
     for card in cards:
         vcard = VirtualCard(number=card.number, card=card, session=session, state=1)

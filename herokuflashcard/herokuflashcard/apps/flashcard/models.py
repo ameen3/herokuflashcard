@@ -20,7 +20,7 @@ class Card(models.Model):
     cardset = models.ForeignKey(Cardset)
 
     def __unicode__(self):
-        return self.question
+        return str(self.number)
 
 
 class Temp_Card(models.Model):
@@ -30,7 +30,7 @@ class Temp_Card(models.Model):
     hint = models.TextField(default="")
 
     def __unicode__(self):
-        return self.question
+        return str(self.number)
 
 
 class Session(models.Model):
@@ -50,5 +50,5 @@ class VirtualCard(models.Model):
     state = models.IntegerField()
 
     def __unicode__(self):
-        return self.card.question
+        return str(self.card.number)
 

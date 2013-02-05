@@ -143,7 +143,7 @@ def create(request):
             error = "Please enter a title"
             save = False
             cardset = None
-            temp_cards, extra_cards, tot_cards = create_cards(request,
+            temp_cards, extra_cards, tot_cards, textwall_error, textwall = create_cards(request,
                                                 tot_cards, cardset, save, user)
             return render_to_response('create.html',
                 {'temp_cards': temp_cards, 'error': error,
@@ -154,7 +154,7 @@ def create(request):
             error = "Cardset title is already in use"
             save = False
             cardset = None
-            temp_cards, extra_cards, tot_cards = create_cards(request,
+            temp_cards, extra_cards, tot_cards, textwall_error, textwall = create_cards(request,
                                                 tot_cards, cardset, save, user)
             return render_to_response('create.html',
                 {'temp_cards': temp_cards, 'error': error, 'title': title,
@@ -208,8 +208,14 @@ def edit(request):
             cardset = None
             save = False
 
-        cards, extra_cards, tot_cards = create_cards(request, tot_cards,
-                                        cardset, save, user)
+        cards, extra_cards, tot_cards, textwall_error, textwall = create_cards(request, tot_cards, cardset, save, user)
+
+        if not error and textwall_error and textwall_check(request):
+            return render_to_response('edit.html', {'cards': cards,
+            'extra_cards': extra_cards, 'tot_cards': tot_cards,
+            'textwall_error': textwall_error, 'textwall': textwall,
+            'cardset': cardset}, context_instance=RequestContext(request))
+
         return render_to_response('edit.html', {'cards': cards,
             'extra_cards': extra_cards, 'tot_cards': tot_cards, 'error': error,
             'cardset': cardset}, context_instance=RequestContext(request))
@@ -616,35 +622,49 @@ def create_cardset(request, title, user, tot_cards):
 
 
 def create_cards(request, tot_cards, cardset, save, user):
-    #creates a list of card model objects, a list of extra cards
-    #and keeps track of the total number of cards
-    #Also adds extra_cards to the total number as needed
-    #if save is true, saves the cardset and the cards (deletes former cards)
-    # returns the cards, blank extra_cards, and tot_cards
+    # gets all the cards from the post, adds any from textwall
+    # if there are no errors, saves the cards
+    # adjusts tot_cards and extra_cards to properly display all cards
+    if not tot_cards:
+        tot_cards = 10
+
+    cards = card_post(tot_cards, request)
+    error, textwall = "", ""
+    if textwall_check(request):
+        textwall_cards, error, textwall = textwall_post(request)
+        if error:
+            save = False
+        cards = cards + textwall_cards
+
     if save:
         request.session['cardset'] = cardset
         cardset.save()
         Card.objects.filter(cardset__exact=cardset.id).delete()
+
+        temp_cards = list(cards)
+        cards = []
+        for temp_card in temp_cards:
+
+            card = Card(number=temp_card.number, question=temp_card.question,
+                        answer=temp_card.answer, hint=temp_card.hint, cardset=cardset)
+            card.save()
+            cards.append(card)
+
+    cards = delete_cards(request, cards, save)
+    add = add_cards(request)
+    extra_cards, tot_cards = create_extra_cards(cards, tot_cards, add)
+    return cards, extra_cards, tot_cards, error, textwall
+
+def card_post(tot_cards, request):
     cards = []
-    if not tot_cards:
-        tot_cards = 10
     count = 1
     for i in range(1, tot_cards + 1):
         q, a, h = get_card(request, i)
         if string_check(q, a):
-            if save:
-                card = Card(number=count, question=q, answer=a, hint=h,
-                            cardset=cardset)
-                card.save()
-            else:
-                card = Temp_Card(number=count, question=q, answer=a, hint=h)
+            card = Temp_Card(number=count, question=q, answer=a, hint=h)
             cards.append(card)
             count += 1
-    cards = delete_cards(request, cards, save)
-    add = add_cards(request)
-    extra_cards, tot_cards = create_extra_cards(cards, tot_cards, add)
-    return cards, extra_cards, tot_cards
-
+    return cards
 
 def create_extra_cards(cards, tot_cards=0, add=0):
 #based on the number of cards, creates extra blank cards, and tot_cards
@@ -728,3 +748,44 @@ def practice_post_params(request):
     save = request.POST.get('save')
     shuffle = request.POST.get('shuffle')
     return back, _next, answer, hint, question, wrong, correct, _exit, save, shuffle
+
+
+def textwall_check(request):
+    textwall = request.POST.get('textwall')
+    field = request.POST.get('field')
+    line = request.POST.get('line')
+    if textwall and field and line:
+        if string_check(textwall, field, line):
+            return True
+    return False
+
+def textwall_post(request):
+    textwall = request.POST.get('textwall')
+    field = request.POST.get('field')
+    line = request.POST.get('line')
+
+    error = ""
+    line_count = 0
+    lines = textwall.split(line)
+    # first check for errors
+    for l in lines:
+        fields = l.split(field)
+        if len(fields) > 3:
+            error = "Too many fields in line %s" % (line_count + 1)
+        elif len(fields) < 2:
+            error = "Too few fields in line %s" % (line_count + 1)
+    # only then build cards
+    cards = []
+    if not error:
+        for i in range(len(lines)):
+            fields = lines[i].split(field)
+            q = fields[0]
+            a = fields[1]
+            if len(fields) == 3:
+                h = fields[2]
+            else:
+                h = ""
+            number = i + 1
+            card = Temp_Card(number=number, question=q, answer=a, hint=h)
+            cards.append(card)
+    return cards, error, textwall

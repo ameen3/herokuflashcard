@@ -19,6 +19,9 @@ class Card(models.Model):
     hint = models.TextField(default="")
     cardset = models.ForeignKey(Cardset)
 
+    def __unicode__(self):
+        return self.question
+
 
 class Temp_Card(models.Model):
     number = models.IntegerField()

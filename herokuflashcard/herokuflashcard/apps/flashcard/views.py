@@ -7,6 +7,7 @@ from herokuflashcard.apps.flashcard.models import User, Cardset, Card, Session, 
 import re
 import hashlib
 import random
+import string
 
 SECRET = "secret"
 
@@ -98,7 +99,8 @@ def welcome(request):
     if not user:
         return HttpResponseRedirect('/login')
     if request.method == 'GET':
-        wipe_session(request, 'cardset', 'vcards', 'side', 'current_card')
+        wipe_session(request, 'cardset', 'vcards', 'side',
+                     'current_card', 'new_vcards')
         cardsets = Cardset.objects.filter(username=user.id)
         return render_to_response('welcome.html', {'username': user.username,
             'cardsets': cardsets}, context_instance=RequestContext(request))
@@ -209,6 +211,7 @@ def edit(request):
             save = False
 
         cards, extra_cards, tot_cards, textwall_error, textwall = create_cards(request, tot_cards, cardset, save, user)
+        #request.session['cards'] = cards
 
         if not error and textwall_error and textwall_check(request):
             return render_to_response('edit.html', {'cards': cards,
@@ -649,7 +652,7 @@ def create_cards(request, tot_cards, cardset, save, user):
         for temp_card in temp_cards:
             card = Card(number=count, question=temp_card.question,
                         answer=temp_card.answer, hint=temp_card.hint, cardset=cardset)
-            card.save()
+            #card.save()
             cards.append(card)
             count += 1
 
@@ -793,14 +796,15 @@ def textwall_post(request):
             cards.append(card)
     return cards, error, textwall
 
-def format_string(string, max_length=38):
+def format_string(string, max_length=36):
     new_string = ""
     lines = string.split('\n')
     for line in lines:
         if string_check(line):
             while len(line) > max_length:
-                segment = line[:max_length-2]
-                line = line[max_length-2:]
+                div = line.rfind(" ", 0, max_length)
+                segment = line[:div]
+                line = line[div:]
                 new_string = new_string + segment + '\n'
             new_string = new_string + line + '\n'
     return new_string

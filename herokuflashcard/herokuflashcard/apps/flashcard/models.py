@@ -49,5 +49,6 @@ class VirtualCard(models.Model):
     session = models.ForeignKey(Session)
     state = models.IntegerField()
 
-
+    def __unicode__(self):
+        return self.card.question
 
